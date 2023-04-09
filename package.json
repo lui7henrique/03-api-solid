@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/lui7henrique/03-api-solid#readme",
   "devDependencies": {
+    "@rocketseat/eslint-config": "1.2.0",
     "@types/node": "18.15.11",
+    "eslint": "8.38.0",
+    "prettier": "2.8.7",
     "tsup": "6.7.0",
     "tsx": "3.12.6",
     "typescript": "5.0.4"
