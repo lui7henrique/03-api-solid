@@ -9,7 +9,8 @@
     "start": "node build/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "@types/bcryptjs": "2.4.2",
     "@types/node": "18.15.11",
     "@vitest/coverage-c8": "0.30.1",
+    "@vitest/ui": "0.30.1",
     "eslint": "8.38.0",
     "prisma": "4.12.0",
     "tsup": "6.7.0",
