@@ -9,20 +9,45 @@ let checkInsRepository: InMemoryCheckInsRepository
 let sut: CheckInUseCase
 let gymsRepository: InMemoryGymsRepository
 
+const gym1 = {
+  id: 'gym-01',
+  title: 'JavaScript Gym',
+  description: '',
+  phone: '',
+  latitude: new Decimal(-23.5011322),
+  longitude: new Decimal(-46.29736),
+}
+
+const validGym1CheckIn = {
+  gymId: gym1.id,
+  userId: 'user-01',
+  userLatitude: Number(gym1.latitude),
+  userLongitude: Number(Number),
+}
+
+const gym2 = {
+  id: 'gym-02',
+  title: 'JavaScript Gym',
+  description: '',
+  phone: '',
+  latitude: new Decimal(-23.5481168),
+  longitude: new Decimal(-46.3098606),
+}
+
+const invalidGym2CheckIn = {
+  gymId: 'gym-02',
+  userId: 'user-01',
+  userLatitude: -23.5437176,
+  userLongitude: -46.3184568,
+}
+
 describe('Check-in Use Case', () => {
   beforeEach(() => {
     checkInsRepository = new InMemoryCheckInsRepository()
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-    gymsRepository.items.push({
-      id: 'gym-01',
-      title: 'JavaScript Gym',
-      description: '',
-      phone: '',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
-    })
+    gymsRepository.items.push(gym1)
 
     vi.useFakeTimers()
   })
@@ -32,12 +57,7 @@ describe('Check-in Use Case', () => {
   })
 
   it('should be able to check in', async () => {
-    const { checkIn } = await sut.execute({
-      gymId: 'gym-01',
-      userId: 'user-01',
-      userLatitude: -27.2092052,
-      userLongitude: -49.6401091,
-    })
+    const { checkIn } = await sut.execute(validGym1CheckIn)
 
     expect(checkIn.id).toEqual(expect.any(String))
   })
@@ -45,42 +65,28 @@ describe('Check-in Use Case', () => {
   it('should not be able to check in twice in the same day', async () => {
     vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
 
-    await sut.execute({
-      gymId: 'gym-01',
-      userId: 'user-01',
-      userLatitude: -27.2092052,
-      userLongitude: -49.6401091,
-    })
+    await sut.execute(validGym1CheckIn)
 
-    await expect(() =>
-      sut.execute({
-        gymId: 'gym-01',
-        userId: 'user-01',
-        userLatitude: -27.2092052,
-        userLongitude: -49.6401091,
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    await expect(() => sut.execute(validGym1CheckIn)).rejects.toBeInstanceOf(
+      Error,
+    )
   })
 
   it('should be able to check in twice but in different days', async () => {
     vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
-
-    await sut.execute({
-      gymId: 'gym-01',
-      userId: 'user-01',
-      userLatitude: -27.2092052,
-      userLongitude: -49.6401091,
-    })
+    await sut.execute(validGym1CheckIn)
 
     vi.setSystemTime(new Date(2022, 0, 21, 8, 0, 0))
-
-    const { checkIn } = await sut.execute({
-      gymId: 'gym-01',
-      userId: 'user-01',
-      userLatitude: -27.2092052,
-      userLongitude: -49.6401091,
-    })
+    const { checkIn } = await sut.execute(validGym1CheckIn)
 
     expect(checkIn.id).toEqual(expect.any(String))
+  })
+
+  it('should not be able to check in on distant gym', async () => {
+    gymsRepository.items.push(gym2)
+
+    await expect(() => sut.execute(invalidGym2CheckIn)).rejects.toBeInstanceOf(
+      Error,
+    )
   })
 })
