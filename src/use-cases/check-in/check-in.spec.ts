@@ -4,6 +4,8 @@ import { Decimal } from '@prisma/client/runtime/library'
 
 import { CheckInUseCase } from '@/use-cases/check-in'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
+import { MaxNumberOfCheckInsError } from '../error/max-number-of-check-ins-error'
+import { MaxDistanceError } from '../error/max-distance-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let sut: CheckInUseCase
@@ -47,7 +49,7 @@ describe('Check-in Use Case', () => {
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-    gymsRepository.items.push(gym1)
+    gymsRepository.create(gym1)
 
     vi.useFakeTimers()
   })
@@ -68,7 +70,7 @@ describe('Check-in Use Case', () => {
     await sut.execute(validGym1CheckIn)
 
     await expect(() => sut.execute(validGym1CheckIn)).rejects.toBeInstanceOf(
-      Error,
+      MaxNumberOfCheckInsError,
     )
   })
 
@@ -86,7 +88,7 @@ describe('Check-in Use Case', () => {
     gymsRepository.items.push(gym2)
 
     await expect(() => sut.execute(invalidGym2CheckIn)).rejects.toBeInstanceOf(
-      Error,
+      MaxDistanceError,
     )
   })
 })

@@ -31,8 +31,6 @@ describe('Register Use Case', () => {
       password: '123456',
     })
 
-    console.log({ user })
-
     const isPasswordCorrectlyHashed = await compare(
       '123456',
       user.password_hash,

@@ -30,7 +30,5 @@ export function getDistanceBetweenCoordinates(
   dist = dist * 60 * 1.1515
   dist = dist * 1.609344
 
-  console.log({ dist })
-
   return dist
 }
