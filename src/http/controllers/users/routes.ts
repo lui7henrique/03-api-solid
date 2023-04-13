@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { verifyJwt } from '@/middlewares/verify-jwt'
+import { verifyJwt } from '@/http/middlewares/verify-jwt'
 
 import { authenticate } from './authenticate'
 import { register } from './register'
